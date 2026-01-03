@@ -2,453 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>High-impact USD — This Week</title>
-  <meta name="theme-color" content="#0c0c0e" />
-  <style>
-    :root{
-      --bg:#0b0f14; --text:#e7edf3; --muted:#9fb0c3; --ring:#262b33; --panel:#121821;
-      --chip:#1b1f27; --hi:#f87171; --pos:#22c55e; --neg:#ef4444; --track:#2a2f38;
-      --nav:#181d25; --nav-accent:#2563eb;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font:15px/1.45 system-ui,Segoe UI,Roboto}
-
-    /* ===== TOP ===== */
-    header{padding:18px 16px 10px;border-bottom:1px solid var(--ring)}
-    .wrap{max-width:900px;margin:0 auto}
-
-    .toprow{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:16px;
-      margin-bottom:10px;
-    }
-
-    h1{
-      margin:0;
-      font-size:30px;
-      line-height:1.05;
-      letter-spacing:-.02em;
-      font-weight:900;
-    }
-
-    .weeknav{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:var(--nav);
-      border:1px solid var(--ring);
-      white-space:nowrap;
-      flex-shrink:0;
-    }
-
-    .navbtn{
-      border:none;
-      background:transparent;
-      color:var(--muted);
-      font-size:16px;
-      padding:4px 6px;
-      cursor:pointer;
-      border-radius:999px;
-      transition:background .15s ease,color .15s ease,opacity .15s ease;
-    }
-    .navbtn:hover{background:#11151c;color:var(--text);}
-    .navbtn.disabled{
-      opacity:.35;
-      cursor:default;
-      pointer-events:none;
-    }
-
-    .weeklabel{
-      font-size:13px;
-      font-weight:600;
-      color:#d6e1f5;
-    }
-
-    .metricline{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-    .chip{background:var(--chip);border:1px solid var(--ring);border-radius:16px;padding:8px 16px;font-weight:900;font-size:22px}
-    .gauge{position:relative;width:260px;height:16px;background:var(--track);border:1px solid var(--ring);border-radius:999px;overflow:hidden}
-    .gauge .zero{position:absolute;left:50%;top:0;bottom:0;width:2px;background:#3a3b42}
-    .gauge .fill{position:absolute;top:0;bottom:0;transition:width .25s ease,left .25s ease}
-    .gauge .fill.pos{left:50%;background:#1f5d2f}
-    .gauge .fill.neg{right:50%;left:auto;background:#7a1f1f}
-
-    .pct{font-weight:900;font-size:22px;min-width:86px;text-align:right}
-    .src{font-weight:700;font-size:16px;color:#9ad3df}
-    .src:empty{display:none}
-    .src:not(:empty)::before{content:"• ";margin-right:4px;color:#9ad3df}
-
-    .updated{margin-top:10px;color:var(--muted);font-size:13px}
-
-    /* ===== LIST ===== */
-    main{max-width:900px;margin:0 auto;padding:12px 16px 36px}
-    .note{display:flex;align-items:center;justify-content:center;min-height:48px;margin:14px 0 12px;padding:10px 14px;border-radius:14px;background:var(--panel)}
-    ul{list-style:none;margin:0;padding:0}
-
-    .dayrow{
-      margin-top:20px;
-      margin-bottom:4px;
-      padding:2px 2px;
-      font-size:13px;
-      color:var(--muted);
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-    .dayrow span{
-      font-weight:600;
-    }
-    .dayrow .line{
-      flex:1;
-      height:1px;
-      background:var(--ring);
-      opacity:.85;
-    }
-
-    .item{display:flex;border-radius:22px;background:var(--panel);border:1px solid var(--ring);margin:10px 0;overflow:hidden;transition:border-color .2s ease,box-shadow .2s ease}
-    .left{width:10px;background:var(--ring);transition:background .2s ease}
-    .content{flex:1;padding:20px 18px 16px}
-    .title{margin:0 0 10px;font-size:28px;font-weight:900;letter-spacing:-.02em}
-    .badges{display:flex;gap:10px;flex-wrap:wrap;margin:-2px 0 10px}
-    .badge{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-weight:800;background:#161a20;border:1px solid var(--ring);font-size:13px}
-    .badge.high:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--hi)}
-    .when,.meta{font-size:15px;color:var(--muted)}
-
-    /* highlight today */
-    .item.today{
-      border-color:#38bdf8;
-      box-shadow:0 0 0 1px rgba(56,189,248,.8);
-    }
-    .item.today .left{
-      background:#0ea5e9;
-    }
-
-    .footer{margin-top:22px;text-align:center;color:var(--muted);font-size:12px}
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Daily Trading Ticket</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <div class="toprow">
-        <div>
-          <h1>High-impact USD events.</h1>
-        </div>
-        <div class="weeknav">
-          <button id="prevWeek" class="navbtn" aria-label="Previous week">‹</button>
-          <div id="weekLabel" class="weeklabel">Week</div>
-          <button id="nextWeek" class="navbtn" aria-label="Next week">›</button>
+  <main class="wrap">
+
+    <header class="top">
+      <div>
+        <h1>Daily Trading Ticket</h1>
+        <div class="meta">
+          <span id="liveDate"></span>
+          <span class="dot">•</span>
+          <span id="liveTime"></span>
         </div>
       </div>
 
-      <div class="metricline">
-        <div class="chip">US30</div>
-        <div class="gauge">
-          <div class="zero"></div>
-          <div id="hbFill" class="fill"></div>
-        </div>
-        <div id="hbVal" class="pct">0.00%</div>
-        <div id="hbSrc" class="src"></div>
+      <div class="actions">
+        <button id="btnCopy" class="btn">Copy</button>
+        <button id="btnReset" class="btn btn-ghost">Reset</button>
       </div>
-      <div id="updated" class="updated"></div>
-    </div>
-  </header>
+    </header>
 
-  <main>
-    <div class="wrap">
-      <div class="note" id="note">Loading…</div>
-      <ul id="list"></ul>
-      <div class="footer">Static USD calendar data (based on ForexFactory screenshots).</div>
-    </div>
+    <section class="card">
+      <h2>Bias Lock</h2>
+
+      <div class="grid">
+        <label class="field">
+          <span>Bias (Long / Short)</span>
+          <input id="bias" placeholder="Short" />
+        </label>
+
+        <label class="field">
+          <span>Ideal Model</span>
+          <input id="model" placeholder="BOS + FVG / IFVG" />
+        </label>
+
+        <label class="field">
+          <span>Primary Level / PD Array</span>
+          <input id="level" placeholder="15m FVG / 1h IFVG / HOD" />
+        </label>
+
+        <label class="field">
+          <span>Invalidation</span>
+          <input id="invalidation" placeholder="5m close through FVG" />
+        </label>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Execution Rule</h2>
+
+      <p class="rule">
+        If my bias is written and my exact model prints, I must execute the
+        first valid setup at full size. No discretion. No delay.
+      </p>
+
+      <div class="checklist">
+        <label class="check">
+          <input id="chkBiasWritten" type="checkbox" />
+          <span>Bias written & frozen</span>
+        </label>
+
+        <label class="check">
+          <input id="chkTriggerTrue" type="checkbox" />
+          <span>Trigger TRUE (BOS + FVG/IFVG)</span>
+        </label>
+
+        <label class="check">
+          <input id="chkExecuted" type="checkbox" />
+          <span>Executed first valid setup</span>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Notes</span>
+        <textarea id="notes" rows="4"></textarea>
+      </label>
+    </section>
+
+    <section class="footer">
+      <label class="check tiny">
+        <input id="chkSaveLocal" type="checkbox" />
+        <span>Save locally on this device</span>
+      </label>
+    </section>
+
   </main>
 
-  <template id="row">
-    <li class="item">
-      <div class="left"></div>
-      <div class="content">
-        <h3 class="title"></h3>
-        <div class="badges"></div>
-        <div class="when"></div>
-        <div class="meta"></div>
-      </div>
-    </li>
-  </template>
-
-  <script>
-    /* ===== STATIC WEEK DATA (from screenshots) ===== */
-    const WEEKS = [
-      {
-        label: "Nov 16 – Nov 22, 2025",
-        start: "2025-11-16",
-        end:   "2025-11-22",
-        items: [
-          { title:"FOMC Meeting Minutes", datetime:"2025-11-19T14:00:00-05:00", impact:"High", currency:"USD" },
-          { title:"Unemployment Claims",  datetime:"2025-11-20T00:00:00-05:00", impact:"High", currency:"USD", timeLabel:"Tentative" },
-          { title:"Flash Manufacturing PMI", datetime:"2025-11-21T09:45:00-05:00", impact:"High", currency:"USD" },
-          { title:"Flash Services PMI",      datetime:"2025-11-21T09:45:00-05:00", impact:"High", currency:"USD" },
-        ]
-      },
-      {
-        label: "Nov 23 – Nov 29, 2025",
-        start: "2025-11-23",
-        end:   "2025-11-29",
-        items: [
-          { title:"Prelim GDP q/q",           datetime:"2025-11-26T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Unemployment Claims",      datetime:"2025-11-26T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Core PCE Price Index m/m", datetime:"2025-11-26T10:00:00-05:00", impact:"High", currency:"USD" },
-        ]
-      },
-      {
-        label: "Nov 30 – Dec 6, 2025",
-        start: "2025-11-30",
-        end:   "2025-12-06",
-        items: [
-          { title:"ISM Manufacturing PMI",        datetime:"2025-12-01T10:00:00-05:00", impact:"High", currency:"USD" },
-          { title:"JOLTS Job Openings",          datetime:"2025-12-02T10:00:00-05:00", impact:"High", currency:"USD" },
-          { title:"ADP Non-Farm Employment Change", datetime:"2025-12-03T08:15:00-05:00", impact:"High", currency:"USD" },
-          { title:"ISM Services PMI",            datetime:"2025-12-03T10:00:00-05:00", impact:"High", currency:"USD" },
-          { title:"Unemployment Claims",         datetime:"2025-12-04T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Average Hourly Earnings m/m", datetime:"2025-12-05T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Non-Farm Employment Change",  datetime:"2025-12-05T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Unemployment Rate",           datetime:"2025-12-05T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Prelim UoM Consumer Sentiment",    datetime:"2025-12-05T10:00:00-05:00", impact:"High", currency:"USD" },
-          { title:"Prelim UoM Inflation Expectations", datetime:"2025-12-05T10:00:00-05:00", impact:"High", currency:"USD" },
-        ]
-      },
-      {
-        label: "Dec 7 – Dec 13, 2025",
-        start: "2025-12-07",
-        end:   "2025-12-13",
-        items: [
-          { title:"Core CPI m/m",      datetime:"2025-12-10T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"CPI m/m",           datetime:"2025-12-10T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"CPI y/y",           datetime:"2025-12-10T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Federal Funds Rate",          datetime:"2025-12-10T14:00:00-05:00", impact:"High", currency:"USD" },
-          { title:"FOMC Economic Projections",  datetime:"2025-12-10T14:00:00-05:00", impact:"High", currency:"USD" },
-          { title:"FOMC Statement",             datetime:"2025-12-10T14:00:00-05:00", impact:"High", currency:"USD" },
-          { title:"FOMC Press Conference",      datetime:"2025-12-10T14:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Core PPI m/m",      datetime:"2025-12-11T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"PPI m/m",           datetime:"2025-12-11T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Unemployment Claims", datetime:"2025-12-11T08:30:00-05:00", impact:"High", currency:"USD" },
-        ]
-      },
-      {
-        label: "Dec 14 – Dec 20, 2025",
-        start: "2025-12-14",
-        end:   "2025-12-20",
-        items: [
-          { title:"Flash Manufacturing PMI", datetime:"2025-12-16T09:45:00-05:00", impact:"High", currency:"USD" },
-          { title:"Flash Services PMI",      datetime:"2025-12-16T09:45:00-05:00", impact:"High", currency:"USD" },
-          { title:"Core Retail Sales m/m",   datetime:"2025-12-17T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Retail Sales m/m",        datetime:"2025-12-17T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Unemployment Claims",     datetime:"2025-12-18T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Final GDP q/q",           datetime:"2025-12-19T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Core PCE Price Index m/m", datetime:"2025-12-19T10:00:00-05:00", impact:"High", currency:"USD" },
-        ]
-      },
-      {
-        label: "Dec 21 – Dec 27, 2025",
-        start: "2025-12-21",
-        end:   "2025-12-27",
-        items: [
-          { title:"Unemployment Claims", datetime:"2025-12-24T08:30:00-05:00", impact:"High", currency:"USD" },
-          { title:"Bank Holiday",       datetime:"2025-12-25T00:00:00-05:00", impact:"Holiday", currency:"USD", timeLabel:"All Day" },
-        ]
-      },
-    ];
-
-    /* ===== helpers ===== */
-    function monthDay(dt){
-      return new Intl.DateTimeFormat([], {month:'short', day:'2-digit'}).format(dt);
-    }
-    function weekdayMonthDay(dt){
-      return new Intl.DateTimeFormat([], {weekday:'short', month:'short', day:'2-digit'}).format(dt);
-    }
-    function hhmm(dt){
-      return new Intl.DateTimeFormat([], {hour:'numeric', minute:'2-digit'}).format(dt);
-    }
-
-    /* ===== Heatbar / US30 % (kept from your original) ===== */
-    const WORKER = "https://green-haze-8240.mikaelalexiou.workers.dev/";
-
-    function setUS30Pct(pct, sourceLabel){
-      const val=document.getElementById('hbVal');
-      const fill=document.getElementById('hbFill');
-      const src=document.getElementById('hbSrc');
-      if(!val||!fill) return;
-
-      const CAP=2, mag=Math.min(Math.abs(pct),CAP), half=50, w=(mag/CAP)*half;
-      fill.classList.remove('pos','neg');
-      if(pct>=0){fill.classList.add('pos');val.style.color='var(--pos)';}
-      else{fill.classList.add('neg');val.style.color='var(--neg)';}
-      fill.style.width=w.toFixed(2)+'%';
-      val.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
-      src.textContent = sourceLabel || '';
-    }
-
-    let hbInterval = 180000; // 3m
-    async function fetchUS30(){
-      const pct1 = await getPctVia(`${WORKER}/?url=${encodeURIComponent("https://query1.finance.yahoo.com/v7/finance/quote?symbols=%5EDJI")}`);
-      if (pct1 != null) { setUS30Pct(pct1, "DJI"); scheduleNext(true); return; }
-
-      const pct2 = await getPctFromChart(`${WORKER}/?url=${encodeURIComponent("https://query1.finance.yahoo.com/v8/finance/chart/%5EDJI?range=1d&interval=1m")}`);
-      if (pct2 != null) { setUS30Pct(pct2, "DJI*"); scheduleNext(true); return; }
-
-      const pct3 = await getPctVia(`${WORKER}/?url=${encodeURIComponent("https://query1.finance.yahoo.com/v7/finance/quote?symbols=DIA")}`);
-      if (pct3 != null) { setUS30Pct(pct3, "DIA"); scheduleNext(true); return; }
-
-      scheduleNext(false);
-    }
-    function scheduleNext(success){
-      hbInterval = success ? 180000 : Math.min(hbInterval * 1.7, 15*60*1000);
-      setTimeout(fetchUS30, hbInterval + Math.floor(Math.random()*5000));
-    }
-    async function getPctVia(url){
-      try{
-        const r = await fetch(url, { cache:"no-store" });
-        if(!r.ok) return null;
-        const data = await r.json();
-        const q = data?.quoteResponse?.result?.[0];
-        if(!q) return null;
-        if (typeof q.regularMarketChangePercent === "number") return q.regularMarketChangePercent;
-        if (typeof q.regularMarketPrice === "number" && typeof q.regularMarketPreviousClose === "number")
-          return ((q.regularMarketPrice - q.regularMarketPreviousClose)/q.regularMarketPreviousClose)*100;
-        return null;
-      }catch{ return null; }
-    }
-    async function getPctFromChart(url){
-      try{
-        const r = await fetch(url, { cache:"no-store" });
-        if(!r.ok) return null;
-        const data = await r.json();
-        const meta = data?.chart?.result?.[0]?.meta;
-        if(!meta) return null;
-        const last = meta.regularMarketPrice ?? meta.previousClose;
-        const prev = meta.chartPreviousClose ?? meta.previousClose;
-        if(typeof last==="number" && typeof prev==="number" && prev!==0)
-          return ((last-prev)/prev)*100;
-        return null;
-      }catch{ return null; }
-    }
-
-    /* ===== render list ===== */
-    function render(items){
-      const list=document.getElementById('list');
-      const note=document.getElementById('note');
-      list.innerHTML='';
-      const tpl=document.getElementById('row');
-      const todayISO=new Date().toISOString().slice(0,10);
-      let todays=0;
-
-      // sort items by datetime
-      const sorted = [...items].sort((a,b) => {
-        const da = new Date(a.datetime || 0).getTime();
-        const db = new Date(b.datetime || 0).getTime();
-        return da - db;
-      });
-
-      let lastDayKey = null;
-
-      for(const e of sorted){
-        const dstr = e.datetime || "";
-        const dt = new Date(dstr);
-        const dayKey = !isNaN(dt) ? dt.toISOString().slice(0,10) : null;
-
-        // day divider
-        if(dayKey && dayKey !== lastDayKey){
-          lastDayKey = dayKey;
-          const dayLi = document.createElement('li');
-          dayLi.className = 'dayrow';
-          dayLi.innerHTML = `<span>${weekdayMonthDay(dt)}</span><div class="line"></div>`;
-          list.appendChild(dayLi);
-        }
-
-        const li=tpl.content.firstElementChild.cloneNode(true);
-
-        let isToday=false;
-        if(dayKey && dayKey === todayISO){ isToday = true; todays++; }
-        if(isToday){ li.classList.add('today'); }
-
-        li.querySelector('.title').textContent=e.title;
-
-        const badges=li.querySelector('.badges');
-        const b1=document.createElement('span'); b1.className='badge'; b1.textContent=e.currency || 'USD'; badges.appendChild(b1);
-
-        const impactText = e.impact || 'High';
-        const b2=document.createElement('span');
-        b2.className = impactText === 'High' ? 'badge high' : 'badge';
-        b2.textContent = impactText;
-        badges.appendChild(b2);
-
-        let whenText;
-        if(!isNaN(dt)){
-          if(e.timeLabel){
-            whenText = `${monthDay(dt)} · ${e.timeLabel}`;
-          }else{
-            whenText = `${monthDay(dt)} at ${hhmm(dt)}`;
-          }
-        }else{
-          whenText = dstr;
-        }
-        li.querySelector('.when').textContent=whenText;
-
-        const meta = li.querySelector('.meta');
-        if(e.actual){
-          meta.textContent = `Impact: ${impactText} · ${e.actual}`;
-        }else{
-          meta.textContent = `Impact: ${impactText}`;
-        }
-
-        list.appendChild(li);
-      }
-
-      note.textContent = `Showing ${items.length} high-impact USD event${items.length===1?'':'s'} in this week. ${todays ? todays + " are today (highlighted)." : "No events today in this week."}`;
-      document.getElementById('updated').textContent='Updated: '+new Date().toLocaleString();
-    }
-
-    /* ===== week navigation ===== */
-    const weekLabelEl = document.getElementById('weekLabel');
-    const prevBtn = document.getElementById('prevWeek');
-    const nextBtn = document.getElementById('nextWeek');
-
-    function findInitialWeekIndex(){
-      const today = new Date().toISOString().slice(0,10);
-      for(let i=0;i<WEEKS.length;i++){
-        const w=WEEKS[i];
-        if(w.start <= today && today <= w.end) return i;
-      }
-      return 0;
-    }
-
-    let currentWeekIndex = findInitialWeekIndex();
-
-    function renderWeek(index){
-      currentWeekIndex = index;
-      const w = WEEKS[currentWeekIndex];
-      weekLabelEl.textContent = w.label;
-      render(w.items);
-
-      const isFirst = currentWeekIndex === 0;
-      const isLast  = currentWeekIndex === WEEKS.length - 1;
-      prevBtn.disabled = isFirst;
-      nextBtn.disabled = isLast;
-      prevBtn.classList.toggle('disabled', isFirst);
-      nextBtn.classList.toggle('disabled', isLast);
-    }
-
-    prevBtn.addEventListener('click', () => {
-      if(currentWeekIndex > 0) renderWeek(currentWeekIndex - 1);
-    });
-    nextBtn.addEventListener('click', () => {
-      if(currentWeekIndex < WEEKS.length - 1) renderWeek(currentWeekIndex + 1);
-    });
-
-    /* ===== init ===== */
-    renderWeek(currentWeekIndex);
-    fetchUS30();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
